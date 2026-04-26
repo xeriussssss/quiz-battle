@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ QUIZZ BATTLE</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Stars background -->
+<div class="stars" id="starsContainer"></div>
+<div class="bg-anim"></div>
+<div class="buzz-msg" id="buzzMsg"></div>
+
+<div class="wrap">
+
+  <!-- ========= SETUP ========= -->
+  <div id="setup">
+    <div class="logo-wrap">
+      <span class="lightning-l">⚡</span>
+      <span class="logo">🎮</span>
+      <span class="lightning-r">⚡</span>
+    </div>
+    <div class="big-title">QUIZZ BATTLE</div>
+    <div class="title-underline"></div>
+    <div class="sub-title">Game Rebutan Kelompok — 20 Kotak</div>
+    <div class="school-tag">🏫 MAN 2 Padang Lawas — Kelas X Informatika</div>
+
+    <div class="setup-grid">
+      <div class="team-setup teamA">
+        <span class="team-icon">🔵</span>
+        <div class="team-lbl" style="color:#3A86FF;">Tim Biru</div>
+        <input class="team-input" id="nameA" value="Kelompok A">
+      </div>
+      <div class="team-setup teamB">
+        <span class="team-icon">🔴</span>
+        <div class="team-lbl" style="color:#FF006E;">Tim Merah</div>
+        <input class="team-input" id="nameB" value="Kelompok B">
+      </div>
+    </div>
+
+    <button class="play-btn" onclick="startGame()">⚡ Mulai Battle!</button>
+
+    <div class="rules-box">
+      <h3>📋 Cara Bermain</h3>
+      <ul>
+        <li>20 kotak tersedia — tiap kotak berisi soal berbeda-beda</li>
+        <li>Siapa buzz duluan, tim itu yang pilih kotak &amp; menjawab</li>
+        <li>Jawab <b style="color:#06D6A0;">BENAR</b> → kotak jadi milikmu, giliran pilih lagi</li>
+        <li>Jawab <b style="color:#ff6699;">SALAH</b> → tim lawan boleh menjawab soal yang sama</li>
+        <li>Kedua tim salah → kotak <b style="color:#555;">HANGUS 🚫</b></li>
+        <li>Waktu <b style="color:#FFD23F;">15 menit</b> — kotak terbanyak = MENANG! 🏆</li>
+        <li>Jika <b style="color:#FFD23F;">SERI</b> → ada 1 soal penentu pemenang! ⚡</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========= GAME ========= -->
+  <div id="game" style="display:none;">
+    <div class="game-header">
+      <div class="score-card team-a" id="cardA">
+        <div>
+          <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:#3A86FF;" id="dispNameA">Tim A</div>
+          <div class="sc-score ta" id="scoreA">0</div>
+          <div style="font-size:11px;color:#444;" id="boxesA">0 kotak</div>
+        </div>
+        <div style="font-size:28px;">🔵</div>
+      </div>
+
+      <div class="timer-display">
+        <div class="timer-label">Waktu</div>
+        <div class="timer-val" id="timerDisplay">15:00</div>
+      </div>
+
+      <div class="score-card team-b" id="cardB">
+        <div style="text-align:right;">
+          <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:#FF006E;" id="dispNameB">Tim B</div>
+          <div class="sc-score tb" id="scoreB">0</div>
+          <div style="font-size:11px;color:#444;" id="boxesB">0 kotak</div>
+        </div>
+        <div style="font-size:28px;">🔴</div>
+      </div>
+    </div>
+
+    <div class="turn-bar waiting" id="turnBar">⚡ Pilih kotak untuk memulai!</div>
+    <div class="box-grid" id="boxGrid"></div>
+
+    <div style="text-align:center;margin-top:8px;">
+      <button class="end-btn" onclick="endGame()">⏹ Akhiri Game</button>
+    </div>
+  </div>
+
+  <!-- ========= TIEBREAKER ========= -->
+  <div id="tiebreaker-screen">
+    <div class="tie-trophy">🤝</div>
+    <div class="tie-title">SERI! SOAL PENENTU</div>
+    <div class="tie-sub" id="tie-sub-text">Kedua tim sama kuat! Satu soal akan menentukan pemenang!</div>
+    <div class="tiebreaker-card">
+      <div class="tie-question" id="tie-q-text"></div>
+      <div id="tie-q-body"></div>
+      <div class="tie-feedback" id="tie-feedback"></div>
+      <div class="tie-answer-reveal" id="tie-answer-reveal">
+        <div class="ar-label">Jawaban Benar:</div>
+        <div class="ar-val" id="tie-answer-val"></div>
+      </div>
+      <div class="tie-actions" id="tie-actions"></div>
+    </div>
+  </div>
+
+  <!-- ========= RESULT ========= -->
+  <div id="result-screen">
+    <div class="winner-trophy" id="winTrophy">🏆</div>
+    <div class="winner-title" id="winTitle">MENANG!</div>
+    <div class="winner-msg" id="winMsg">Selamat!</div>
+    <div class="final-scores">
+      <div class="final-sc fa" id="fcA">
+        <div class="fs-name" id="fnA">Tim A</div>
+        <div class="fs-score fa" id="fsA">0</div>
+        <div class="fs-boxes" id="fbA">0 kotak</div>
+      </div>
+      <div class="final-sc fb" id="fcB">
+        <div class="fs-name" id="fnB">Tim B</div>
+        <div class="fs-score fb" id="fsB">0</div>
+        <div class="fs-boxes" id="fbB">0 kotak</div>
+      </div>
+    </div>
+    <button class="replay-btn2" onclick="resetGame()">🔄 Main Lagi</button>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modalContent">
+    <div class="modal-header">
+      <span class="modal-type-badge" id="mTypeBadge"></span>
+      <span class="modal-box-num" id="mBoxNum"></span>
+    </div>
+    <div id="mQBody"></div>
+    <div class="feedback" id="mFeedback"></div>
+    <div class="answer-reveal" id="mAnswerReveal">
+      <div class="ar-label">Jawaban Benar:</div>
+      <div class="ar-val" id="mAnswerVal"></div>
+    </div>
+    <div class="modal-actions" id="mActions"></div>
+  </div>
+</div>
+
+<!-- Music toggle button -->
+<button class="music-btn playing" id="musicBtn" onclick="toggleMusic()">🎵</button>
+
+<script src="script.js"></script>
+</body>
+</html>
